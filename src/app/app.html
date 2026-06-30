@@ -1,1 +1,187 @@
-<h1>Creating the Future...</h1>
+<div class="mx-auto w-[1071px] min-h-screen flex flex-col">
+
+    <header class="flex justify-between p-4">
+        <img class="h-8" src="./assets/logo.png" alt="logo">
+
+        <button type="button"
+                data-modal-target="default-modal"
+                data-modal-toggle="default-modal"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 flex items-center">
+            <img class="w-4 h-4" src="./assets/add-icon.png" alt="add-icon">
+            Add data
+        </button>
+    </header>
+
+    <main class="relative overflow-x-auto flex-1">
+        <table class="w-full text-left rtl:text-right">
+            <thead class="uppercase font-bold text-xs bg-gray-50 text-gray-700">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Transaction
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Date & time
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Amount
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Status
+                </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr class="border-b text-sm">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    Payment from <strong>Bonnie Green</strong>
+                </td>
+                <td class="px-6 py-4 text-gray-500">
+                    Apr 23, 2021
+                </td>
+                <td class="px-6 py-4 text-gray-500 font-bold">
+                    $2300
+                </td>
+                <td class="px-6 py-4">
+                    <span class="inline-block bg-[#8FBC8F] text-[#006400] px-1.5 rounded-[5px]">
+                        Completed
+                    </span>
+                </td>
+            </tr>
+
+            <tr class="border-b text-sm">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    Payment refund to <strong>#00910</strong>
+                </td>
+                <td class="px-6 py-4 text-gray-500">
+                    Apr 23, 2021
+                </td>
+                <td class="px-6 py-4 text-gray-500 font-bold">
+                    -$670
+                </td>
+                <td class="px-6 py-4">
+                    <span class="inline-block bg-[#8FBC8F] text-[#006400] px-1.5 rounded-[5px]">
+                        Completed
+                    </span>
+                </td>
+            </tr>
+
+            <tr class="border-b text-sm">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    Payment failed from <strong>#087651</strong>
+                </td>
+                <td class="px-6 py-4 text-gray-500">
+                    Apr 18, 2021
+                </td>
+                <td class="px-6 py-4 text-gray-500 font-bold">
+                    $234
+                </td>
+                <td class="px-6 py-4">
+                    <span class="inline-block bg-[#FDE8E8] text-[#B45151] px-1.5 rounded-[5px]">
+                        Cancelled
+                    </span>
+                </td>
+            </tr>
+
+            <tr class="border-b text-sm">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    Payment from <strong>Lara Byrd</strong>
+                </td>
+                <td class="px-6 py-4 text-gray-500">
+                    Apr 15, 2021
+                </td>
+                <td class="px-6 py-4 text-gray-500 font-bold">
+                    $5000
+                </td>
+                <td class="px-6 py-4">
+                    <span class="inline-block bg-[#EEECFE] text-[#8967CD] px-1.5 rounded-[5px]">
+                        In progress
+                    </span>
+                </td>
+            </tr>
+
+            <tr class="border-b text-sm">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    Payment from <strong>Jese Leos</strong>
+                </td>
+                <td class="px-6 py-4 text-gray-500">
+                    Apr 15, 2021
+                </td>
+                <td class="px-6 py-4 text-gray-500 font-bold">
+                    $2300
+                </td>
+                <td class="px-6 py-4">
+                    <span class="inline-block bg-[#8FBC8F] text-[#006400] px-1.5 rounded-[5px]">
+                        Completed
+                    </span>
+                </td>
+            </tr>
+
+            <tr class="border-b text-sm">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    Payment from <strong>THEMSBERG LLC</strong>
+                </td>
+                <td class="px-6 py-4 text-gray-500">
+                    Apr 11, 2021
+                </td>
+                <td class="px-6 py-4 text-gray-500 font-bold">
+                    $560
+                </td>
+                <td class="px-6 py-4">
+                    <span class="inline-block bg-[#8FBC8F] text-[#006400] px-1.5 rounded-[5px]">
+                        Completed
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <footer class="py-4 text-gray-500 text-center">
+        © 2007-2024 ООО "Логнекс"
+    </footer>
+
+</div>
+
+<div id="default-modal" tabindex="-1" aria-hidden="true"
+     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative w-full max-w-[26rem] max-h-full">
+        <div class="relative bg-white border rounded-lg">
+            <div class="flex items-center justify-between border-b px-5 py-3">
+                <h3 class="text-xl font-semibold">
+                    Add data
+                </h3>
+                <button type="button"
+                        data-modal-hide="default-modal">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L6.14286 6.14286M6.14286 6.14286L11.2857 11.2857M6.14286 6.14286L11.2857 1M6.14286 6.14286L1 11.2857"
+                              stroke="#9CA3AF" stroke-width="1.71429" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <div class="px-5 py-5">
+                <div>
+                    <label for="transaction" class="block mb-2.5 text-sm font-medium text-heading">Transaction</label>
+                    <input type="text"
+                           id="transaction"
+                           class="bg-gray-50 border border-gray-300 text-sm text-gray-500 rounded-lg w-full"
+                           required/>
+                </div>
+                <div class="pt-4">
+                    <label for="amount" class="block mb-2.5 text-sm font-medium text-heading">Amount</label>
+                    <input type="number"
+                           id="amount"
+                           class="bg-gray-50 border border-gray-300 text-sm text-gray-500 rounded-lg w-full"
+                           required/>
+                </div>
+                <div class="pt-4">
+                    <button type="button"
+                            class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">
+                        Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

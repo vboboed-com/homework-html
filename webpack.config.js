@@ -4,7 +4,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 
 module.exports = {
-    entry: './src/main.js',
+    entry: './src/main.tsx',
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js', '.jsx']
+    },
+
     module: {
 
         rules: [
@@ -14,22 +18,32 @@ module.exports = {
                     path.resolve(__dirname, 'src')
                 ],
                 use: [
-                    'style-loader',
+                    MiniCssExtractPlugin.loader,
                     {
-                        loader: MiniCssExtractPlugin.loader,
+                        loader: "css-loader",
                         options: {
-                            esModule: false
+                            esModule: true,
+                            modules: {
+                                auto: /\.module\.css$/,
+                                namedExport: false
+                            }
                         }
                     },
-                    {
-                        loader: "css-loader"
-                    },
-                    'postcss-loader'
+                    "postcss-loader"
                 ],
             },
             {
                 test: /\.html$/i,
                 loader: "html-loader",
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif|svg)$/i,
+                type: "asset/resource",
             },
         ],
     },

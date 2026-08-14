@@ -4,11 +4,15 @@ import { ContragentTable } from "./components/tables/contragent/ContragentTable"
 import { ContragentModal } from "./components/modals/contragent/ContragentModal";
 import logo from "./assets/logo.png";
 import addIcon from "./assets/add-icon.png";
+import {useContragents} from "./context/ContragentContext";
 
 export function App() {
-    const [contragents, setContragents] = useState<Contragent[]>([
-        new Contragent(1, "МойКонтрагент", "12345678901", "Витебск", "123456789")
-    ]);
+    const {
+        contragents,
+        addContragent,
+        updateContragent,
+        deleteContragent
+    } = useContragents();
 
     const [editingContragentId, setEditingContragentId] = useState<number | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,45 +36,21 @@ export function App() {
         setIsModalOpen(false);
     }
 
-    function saveContragent(modalData: Omit<Contragent, "id">) {
-        if (editingContragentId) {
-            setContragents(
-                contragents.map((contragent) => {
-                    if (contragent.id === editingContragentId) {
-                        return new Contragent(
-                            contragent.id,
-                            modalData.name,
-                            modalData.inn,
-                            modalData.address,
-                            modalData.kpp
-                        );
-                    }
-
-                    return contragent;
-                })
+    async function saveContragent(modalData: Omit<Contragent, "id">) {
+        if (editingContragentId !== null) {
+            await updateContragent(
+                editingContragentId,
+                modalData
             );
         } else {
-            const nextId = contragents.length
-                ? Math.max(...contragents.map((el) => el.id)) + 1
-                : 1;
-
-            setContragents([
-                ...contragents,
-                new Contragent(
-                    nextId,
-                    modalData.name,
-                    modalData.inn,
-                    modalData.address,
-                    modalData.kpp
-                )
-            ]);
+            await addContragent(modalData);
         }
 
         closeModal();
     }
 
-    function deleteContragent(id: number) {
-        setContragents(contragents.filter((item) => item.id !== id));
+    async function removeContragent(id: number) {
+        await deleteContragent(id);
     }
 
     return (
@@ -92,7 +72,7 @@ export function App() {
                 <ContragentTable
                     contragents={contragents}
                     onEdit={fillModal}
-                    onDelete={deleteContragent}
+                    onDelete={removeContragent}
                 />
             </main>
 

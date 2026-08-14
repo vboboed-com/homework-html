@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Contragent } from "../../../entities/contragent";
+import {useEffect, useRef, useState} from "react";
+import {createForm, FormApi} from "final-form";
+import {Contragent} from "../../../entities/contragent";
 
 type ModalData = Omit<Contragent, "id">;
 
@@ -9,33 +10,116 @@ type Props = {
     onCancel: () => void;
 };
 
-export function ContragentModal({ contragent, onSave, onCancel }: Props) {
-    const [name, setName] = useState("");
-    const [inn, setInn] = useState("");
-    const [address, setAddress] = useState("");
-    const [kpp, setKpp] = useState("");
+type FormErrors = Partial<Record<keyof ModalData, string>>;
+
+export function ContragentModal({
+                                    contragent,
+                                    onSave,
+                                    onCancel
+                                }: Props) {
+    const [values, setValues] = useState<ModalData>({
+        name: "",
+        inn: "",
+        address: "",
+        kpp: ""
+    });
+
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [touched, setTouched] = useState<
+        Partial<Record<keyof ModalData, boolean>>
+    >({});
+
+    const formRef = useRef<FormApi<ModalData> | null>(null);
 
     useEffect(() => {
-        if (contragent) {
-            setName(contragent.name);
-            setInn(contragent.inn);
-            setAddress(contragent.address);
-            setKpp(contragent.kpp);
-        } else {
-            setName("");
-            setInn("");
-            setAddress("");
-            setKpp("");
-        }
-    }, [contragent]);
+        const form = createForm<ModalData>({
+            initialValues: {
+                name: contragent?.name ?? "",
+                inn: contragent?.inn ?? "",
+                address: contragent?.address ?? "",
+                kpp: contragent?.kpp ?? ""
+            },
 
-    function saveModal() {
-        onSave({
-            name,
-            inn,
-            address,
-            kpp
+            onSubmit: (formValues) => {
+                onSave(formValues);
+            },
+
+            validate: (formValues) => {
+                const validationErrors: FormErrors = {};
+
+                if (!formValues.name?.trim()) {
+                    validationErrors.name = "Введите наименование";
+                }
+
+                if (!formValues.inn?.trim()) {
+                    validationErrors.inn = "Введите ИНН";
+                } else if (!/^\d{10}$|^\d{12}$/.test(formValues.inn)) {
+                    validationErrors.inn =
+                        "ИНН должен содержать 10 или 12 цифр";
+                }
+
+                if (!formValues.address?.trim()) {
+                    validationErrors.address = "Введите адрес";
+                }
+
+                if (!formValues.kpp?.trim()) {
+                    validationErrors.kpp = "Введите КПП";
+                } else if (!/^\d{9}$/.test(formValues.kpp)) {
+                    validationErrors.kpp =
+                        "КПП должен содержать 9 цифр";
+                }
+
+                return validationErrors;
+            }
         });
+
+        formRef.current = form;
+
+        const unregisterName = form.registerField("name", () => {}, {});
+        const unregisterInn = form.registerField("inn", () => {}, {});
+        const unregisterAddress = form.registerField("address", () => {}, {});
+        const unregisterKpp = form.registerField("kpp", () => {}, {});
+
+        const unsubscribe = form.subscribe(
+            (state) => {
+                setValues(state.values);
+                setErrors((state.errors ?? {}) as FormErrors);
+                setTouched(
+                    (state.touched ?? {}) as Partial<
+                        Record<keyof ModalData, boolean>
+                    >
+                );
+            },
+            {
+                values: true,
+                errors: true,
+                touched: true
+            }
+        );
+
+        return () => {
+            unsubscribe();
+
+            unregisterName();
+            unregisterInn();
+            unregisterAddress();
+            unregisterKpp();
+
+            formRef.current = null;
+        };
+    }, [contragent, onSave]);
+
+    function changeField(field: keyof ModalData, value: string) {
+        formRef.current?.change(field, value);
+    }
+
+    function blurField(field: keyof ModalData) {
+        formRef.current?.blur(field);
+    }
+
+    function saveModal(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        formRef.current?.submit();
     }
 
     return (
@@ -52,7 +136,10 @@ export function ContragentModal({ contragent, onSave, onCancel }: Props) {
                         </h3>
                     </div>
 
-                    <div className="px-5 py-5">
+                    <form
+                        onSubmit={saveModal}
+                        className="px-5 py-5"
+                    >
                         <div>
                             <label htmlFor="name" className="block mb-2.5 text-sm font-medium text-heading">
                                 Наименование
@@ -60,10 +147,19 @@ export function ContragentModal({ contragent, onSave, onCancel }: Props) {
                             <input
                                 type="text"
                                 id="name"
-                                value={name}
-                                onChange={(event) => setName(event.target.value)}
+                                value={values.name}
+                                onChange={(event) =>
+                                    changeField("name", event.target.value)
+                                }
+                                onBlur={() => blurField("name")}
                                 className="bg-gray-50 border border-gray-300 text-sm text-gray-500 rounded-lg w-full"
-                                required/>
+                            />
+
+                            {touched.name && errors.name && (
+                                <div className="mt-1 text-sm text-red-500">
+                                    {errors.name}
+                                </div>
+                            )}
                         </div>
 
                         <div className="pt-4">
@@ -73,10 +169,19 @@ export function ContragentModal({ contragent, onSave, onCancel }: Props) {
                             <input
                                 type="text"
                                 id="inn"
-                                value={inn}
-                                onChange={(event) => setInn(event.target.value)}
+                                value={values.inn}
+                                onChange={(event) =>
+                                    changeField("inn", event.target.value)
+                                }
+                                onBlur={() => blurField("inn")}
                                 className="bg-gray-50 border border-gray-300 text-sm text-gray-500 rounded-lg w-full"
-                                required/>
+                            />
+
+                            {touched.inn && errors.inn && (
+                                <div className="mt-1 text-sm text-red-500">
+                                    {errors.inn}
+                                </div>
+                            )}
                         </div>
 
                         <div className="pt-4">
@@ -86,10 +191,19 @@ export function ContragentModal({ contragent, onSave, onCancel }: Props) {
                             <input
                                 type="text"
                                 id="address"
-                                value={address}
-                                onChange={(event) => setAddress(event.target.value)}
+                                value={values.address}
+                                onChange={(event) =>
+                                    changeField("address", event.target.value)
+                                }
+                                onBlur={() => blurField("address")}
                                 className="bg-gray-50 border border-gray-300 text-sm text-gray-500 rounded-lg w-full"
-                                required/>
+                            />
+
+                            {touched.address && errors.address && (
+                                <div className="mt-1 text-sm text-red-500">
+                                    {errors.address}
+                                </div>
+                            )}
                         </div>
 
                         <div className="pt-4">
@@ -99,17 +213,24 @@ export function ContragentModal({ contragent, onSave, onCancel }: Props) {
                             <input
                                 type="text"
                                 id="kpp"
-                                value={kpp}
-                                onChange={(event) => setKpp(event.target.value)}
+                                value={values.kpp}
+                                onChange={(event) =>
+                                    changeField("kpp", event.target.value)
+                                }
+                                onBlur={() => blurField("kpp")}
                                 className="bg-gray-50 border border-gray-300 text-sm text-gray-500 rounded-lg w-full"
-                                required
                             />
+
+                            {touched.kpp && errors.kpp && (
+                                <div className="mt-1 text-sm text-red-500">
+                                    {errors.kpp}
+                                </div>
+                            )}
                         </div>
 
                         <div className="pt-4 flex gap-3">
                             <button
-                                type="button"
-                                onClick={saveModal}
+                                type="submit"
                                 className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">
                                 Сохранить
                             </button>
@@ -121,7 +242,7 @@ export function ContragentModal({ contragent, onSave, onCancel }: Props) {
                                 Отменить
                             </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
